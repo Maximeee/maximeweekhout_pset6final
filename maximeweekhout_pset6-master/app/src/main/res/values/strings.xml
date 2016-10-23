@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BioscoopVandaag</string>
+    <string name="title_activity_movie_theatre_list">MovieTheatreListActivity</string>
+    <string name="title_activity_start">StartActivity</string>
+</resources>
