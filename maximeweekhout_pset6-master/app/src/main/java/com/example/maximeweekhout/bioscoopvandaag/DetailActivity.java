@@ -1,17 +1,22 @@
 package com.example.maximeweekhout.bioscoopvandaag;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.maximeweekhout.bioscoopvandaag.Movie;
 import com.example.maximeweekhout.bioscoopvandaag.MovieStorage;
@@ -32,9 +37,8 @@ import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
 
-    TextView title, year, genre, actors, plot;
-    String id;
-    CheckBox checkbox;
+    TextView title, actors, plot;
+    JSONObject imdbResult;
     ImageView poster;
     ListView timetable;
 
@@ -54,68 +58,110 @@ public class DetailActivity extends AppCompatActivity {
         storage = new MovieStorage(this);
 
         title = (TextView) findViewById(R.id.vTitle);
-        year = (TextView) findViewById(R.id.vYear);
-        genre = (TextView) findViewById(R.id.vGenre);
         actors = (TextView) findViewById(R.id.vActors);
         plot = (TextView) findViewById(R.id.vPlot);
-        checkbox = (CheckBox) findViewById(R.id.vCheckbox);
         poster = (ImageView) findViewById(R.id.vPoster);
         timetable = (ListView) findViewById(R.id.vTimetable);
         poster.setBackgroundColor(Color.rgb(230, 230, 230));
 
-//        String movieId;
-//        if (savedInstanceState == null) {
-//            Bundle extras = getIntent().getExtras();
-//            if (extras == null) {
-//                movieId = null;
-//            } else {
-//                movieId = extras.getString("Movie");
-//            }
-//        } else {
-//            movieId = (String) savedInstanceState.getSerializable("Movie");
-//        }
+        title.setText(movie.getTitle());
 
-//        checkbox.setChecked(storage.exists(movieId));
-//        new Omdb().execute("http://www.omdbapi.com/?i=" + movieId);
+        /**
+         * Load items
+         */
+        if (!movie.getImdbId().equals("")) {
+            new Omdb().execute("http://www.omdbapi.com/?i=" + movie.getImdbId());
+        }
+
+        if (!movie.getPoster().equals("")) {
+            new ImageFromUrl().execute(movie.getPoster());
+        }
+
+        timetable.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                openDialog(movie.getShows().get(position));
+            }
+        });
+
         updateTimeTable();
     }
 
-    void onCheckboxClicked (View v) {
-        if (checkbox.isChecked()) {
-            storage.add(id);
-        } else {
-            storage.remove(id);
+    /**
+     * Open dialog and ask for what the user wants to do
+     * @param show the selected show
+     */
+    void openDialog(final Show show) {
+
+        // Build an AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
+
+
+        builder.setTitle("Maak een keuze");
+        builder.setItems(new CharSequence[]
+                        {"Opslaan", "Koop tickets", "Annuleer"},
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // The 'which' argument contains the index position
+                        // of the selected item
+                        switch (which) {
+                            case 0:
+                                storeShow(show);
+                                break;
+                            case 1:
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(show.getTicketUrl()));
+                                startActivity(browserIntent);
+                                break;
+                            case 2:
+
+                                break;
+                        }
+                    }
+                });
+        builder.create().show();
+    }
+
+    /**
+     * Store show in permanent storage
+     * @param show the show to be stored
+     */
+    void storeShow(Show show) {
+        StorableShow storableShow = new StorableShow(movie.getTitle(), movie.getTheatre(), show, imdbResult);
+        storage.add(storableShow);
+        Toast.makeText(this, "Show saved!", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Update detail page with imdb results
+     */
+    void updateDetailPage (String result) {
+
+        try {
+            JSONObject o = new JSONObject(result);
+            actors.setText(o.getString("Actors"));
+            plot.setText(o.getString("Plot"));
+            imdbResult = o;
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
-    void updateDetailPage () {
 
-//        new ImageFromUrl().execute(movie.getImageUrl());
-
-        title.setText(movie.getTitle());
-//        year.setText(movie.getYear());
-//        genre.setText(movie.getGenre());
-//        actors.setText(movie.getActors());
-//        plot.setText(movie.getPlot());
-//        id = movie.getId();
-
-    }
-
+    /**
+     * Updates the timetable list with the new times a movie plays
+     */
     void updateTimeTable() {
-        timetable = (ListView) findViewById(R.id.vTimetable);
-
-        List<String> your_array_list = new ArrayList<String>();
+        List<String> list = new ArrayList<String>();
 
         for (int i = 0; i < movie.getShows().size(); i++) {
             Show show = movie.getShows().get(i);
-            String start = show.getStart();
-            String end = show.getEnd();
-            your_array_list.add(start + " - " + end);
+            list.add("Vandaag" + " - Van " + show.getStart() + " tot " + show.getEnd());
         }
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
-                your_array_list );
+                list );
 
         timetable.setAdapter(arrayAdapter);
     }
@@ -169,7 +215,7 @@ public class DetailActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            DetailActivity.this.updateDetailPage();
+            DetailActivity.this.updateDetailPage(result);
 
         }
     }

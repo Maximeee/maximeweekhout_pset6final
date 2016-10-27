@@ -4,18 +4,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by Maxim on 18-10-2016.
+ * Created by Maxime Weekhout on 18-10-2016.
  */
 
 public class Theater {
 
-    private String name, url, city, company;
+    private String name, url;
 
     public Theater(JSONObject o) throws JSONException {
         this.name = o.has("name") ? o.getString("name") : "Unknown";
         this.url = o.has("url") ? o.getString("url") : "Unknown";
-        this.city = o.has("city") ? o.getString("city") : "Unknown";
-        this.company = o.has("company") ? o.getString("company") : "Unknown";
     }
 
     /**

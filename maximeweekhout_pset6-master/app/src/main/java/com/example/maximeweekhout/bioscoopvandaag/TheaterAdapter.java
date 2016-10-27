@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Maxim on 18-10-2016.
+ * Created by Maxime Weekhout on 18-10-2016.
  */
 
 public class TheaterAdapter extends ArrayAdapter<Theater> {
@@ -26,7 +26,7 @@ public class TheaterAdapter extends ArrayAdapter<Theater> {
     }
 
     /**
-     * Actualy loads theater in listitem
+     * Actually loads theater in list item
      * @param position Position of element
      * @param convertView view to be converted
      * @param parent the parent

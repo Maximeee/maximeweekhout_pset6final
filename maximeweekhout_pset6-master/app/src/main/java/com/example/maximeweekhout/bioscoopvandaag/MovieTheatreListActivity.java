@@ -1,5 +1,6 @@
 package com.example.maximeweekhout.bioscoopvandaag;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -29,17 +30,19 @@ public class MovieTheatreListActivity extends AppCompatActivity {
     private List<Theater> theaterlist = new ArrayList<>();
     private ArrayAdapter<Theater> theaterAdapter;
 
+    ProgressDialog pd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_theatre_list);
-        updateList();
 
+        // Define list
         ListView list = (ListView) findViewById(R.id.theatrelist);
 
+        // Load list
         theaterAdapter = new TheaterAdapter(getApplicationContext(), theaterlist);
         list.setAdapter(theaterAdapter);
-
         list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
             @Override
@@ -51,12 +54,14 @@ public class MovieTheatreListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        updateList();
     }
 
     /**
      * Load theaters from API
      */
     void updateList() {
+        pd = ProgressDialog.show(MovieTheatreListActivity.this, "Even geduld...", "Bioscopen worden geladen", true);
         new MovieAPI().execute("http://movieapi.ducosebel.nl/theaters.php");
     }
 
@@ -65,6 +70,8 @@ public class MovieTheatreListActivity extends AppCompatActivity {
      * @param result JSON Result from request
      */
     void loadItemsInList(String result) {
+
+        pd.dismiss();
 
         try {
             JSONObject object = new JSONObject(result);

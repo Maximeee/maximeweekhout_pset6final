@@ -2,6 +2,9 @@ package com.example.maximeweekhout.bioscoopvandaag;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,43 +13,46 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by Maxime on 25-9-2016.
+ * Created by Maxime Weekhout on 25-9-2016.
  */
 
 // https://developer.android.com/guide/topics/data/data-storage.html
 public class MovieStorage {
 
-    public static final String PREFS_NAME = "movieIDList";
+    public static final String PREFS_NAME = "movieListStorage";
+    public static final int VERSION = 1;
 
     private Context context;
     private SharedPreferences sharedPreferences;
 
-
     public MovieStorage(Context context) {
-
-        this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
+        this.sharedPreferences = context.getSharedPreferences(PREFS_NAME + VERSION, 0);
     }
 
-    public void add(String id) {
+    public void add(StorableShow show) {
 
         List<String> list = this.get();
-        list.add(id);
+        list.add(show.getJson());
 
-        // save the task list to preference
+        /**
+         * Save the tast list to preference
+         */
         SharedPreferences.Editor editor = sharedPreferences.edit();
         try {
-            editor.putStringSet("moviesId", new HashSet<String>(list));
+
+            editor.putStringSet("jsonData", new HashSet<String>(list));
         } catch (Exception e) {
             e.printStackTrace();
         }
         editor.commit();
     }
 
+
     public List<String> get() {
 
         List<String> list = new ArrayList<String>();
 
-        Set<String> data = sharedPreferences.getStringSet("moviesId", null);
+        Set<String> data = sharedPreferences.getStringSet("jsonData", null);
         if (data != null){
             list.addAll(data);
         }
@@ -54,30 +60,34 @@ public class MovieStorage {
         if (null == list) {
             return new ArrayList<String>();
         }
+
         return list;
     }
 
-    public void remove(String id) {
+    /**
+     * Removes items from list
+     * @param show
+     */
+    public void remove(StorableShow show) {
 
         List<String> list = this.get();
 
-        list.remove(id);
+        for (String item: list) {
+            try {
+                StorableShow showItem = new StorableShow(item);
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putStringSet("moviesId", new HashSet<String>(list));
-        editor.commit();
-    }
+                if (showItem.getTitle().equals(show.getTitle()) &&
+                showItem.getShow().getStart().equals(show.getShow().getStart())) {
+                    list.remove(item);
+                }
+            } catch (Exception e) {
 
-    public boolean exists(String id) {
-        List<String> list = this.get();
-        Iterator<String> iterator = list.iterator();
-
-        while (iterator.hasNext()) {
-            if (iterator.next().equals(id)) {
-                return true;
             }
         }
-        return false;
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putStringSet("jsonData", new HashSet<>(list));
+        editor.commit();
     }
 }
 

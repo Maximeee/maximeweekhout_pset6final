@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Maxime on 18-10-2016.
+ * Created by Maxime Weekhout on 18-10-2016.
  */
 
 // https://developer.android.com/training/material/lists-cards.html
@@ -51,8 +51,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
         Movie ci = movieList.get(i);
         movieViewHolder.vTitle.setText(ci.getTitle());
+        movieViewHolder.vTheater.setText(ci.getTheatre());
         movieViewHolder.vPoster.setBackgroundColor(Color.rgb(230,230,230));
-        movieViewHolder.vBioscoop.setText(ci.getBioscoop());
         movieViewHolder.movie = ci;
 
         if (!ci.getPoster().equals("")) {
@@ -76,7 +76,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     }
 
     public static class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener  {
-        protected TextView vTitle;
+        protected TextView vTitle, vTheater;
         protected ImageView vPoster;
         protected TextView vBioscoop;
         protected Movie movie;
@@ -86,8 +86,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             v.setOnClickListener(this);
 
             vTitle =  (TextView) v.findViewById(R.id.title);
+            vTheater = (TextView)  v.findViewById(R.id.theater);
             vPoster = (ImageView)  v.findViewById(R.id.poster);
-            vBioscoop = (TextView) v.findViewById(R.id.bioscoop);
         }
 
         /**

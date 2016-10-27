@@ -64,7 +64,7 @@ public class ListActivity extends AppCompatActivity {
      */
     void updateList() {
 
-        pd = ProgressDialog.show(ListActivity.this, "Please wait ...", "Loading shows", true);
+        pd = ProgressDialog.show(ListActivity.this, "Even geduld...", "Films worden geladen", true);
 
         System.out.print("URL: ");
         System.out.println(theaterUrl);

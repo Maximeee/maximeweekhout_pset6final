@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Maxime on 18-10-2016.
+ * Created by Maxime Weekhout on 18-10-2016.
  */
 
 public class Movie implements Serializable {
@@ -19,10 +19,12 @@ public class Movie implements Serializable {
     // https://developer.android.com/reference/org/json/JSONObject.html
     // http://www.tutorialspoint.com/android/android_json_parser.htm
     Movie(JSONObject o) throws Exception {
-        this.title = o.has("title") ? o.getString("title") : "Unknown Title";
 
+        // Parse JsonObject in Movie Object
+        this.title = o.has("title") ? o.getString("title") : "Unknown Title";
         this.theater = o.has("theaterName") ? o.getString("theaterName") : "";
 
+        // Iterate over each time
         if (o.has("times")) {
             JSONArray times =  o.getJSONArray("times");
             for (int i = 0; i < times.length() ; i++) {
@@ -30,6 +32,7 @@ public class Movie implements Serializable {
             }
         }
 
+        // Parse IMDB if there is an positive result
         if (o.has("possibleImdb")) {
             if (!o.getString("possibleImdb").equals("null")) {
                 JSONObject imdb = o.getJSONObject("possibleImdb");
@@ -40,7 +43,7 @@ public class Movie implements Serializable {
     }
 
     /**
-     * Get title
+     * Get title of movie
      * @return title
      */
     public String getTitle() {
@@ -48,7 +51,7 @@ public class Movie implements Serializable {
     }
 
     /**
-     * Get shows
+     * Get all shows that are available
      * @return array
      */
     public List<Show> getShows() {
@@ -77,7 +80,11 @@ public class Movie implements Serializable {
         return posterUrl;
     }
 
-    public String getBioscoop() {
+    /**
+     * Return name of theater
+     * @return theatername
+     */
+    public String getTheatre() {
         return theater;
     }
 }

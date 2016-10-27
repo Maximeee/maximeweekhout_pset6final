@@ -59,17 +59,42 @@
         android:layout_marginTop="5dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/vTimetable"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/vPoster" />
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:id="@+id/vTimetable"
-        android:layout_alignParentBottom="true" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verwijder"
+        android:id="@+id/removeButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="removeButtonClicked"
+        />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Koop ticket"
+        android:id="@+id/ticketButton"
+        android:layout_alignTop="@+id/removeButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Vandaag om 20:30"
+        android:id="@+id/vTime"
+        android:layout_above="@+id/removeButton"
+        android:layout_centerHorizontal="true"
+        android:textSize="25dp"
+        android:textAlignment="center"
+        android:layout_marginBottom="50dp"/>
 
 
 </RelativeLayout>
