@@ -79,6 +79,7 @@ public class MovieStorage {
                 if (showItem.getTitle().equals(show.getTitle()) &&
                 showItem.getShow().getStart().equals(show.getShow().getStart())) {
                     list.remove(item);
+		    break;
                 }
             } catch (Exception e) {
 
